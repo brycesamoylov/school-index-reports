@@ -719,4 +719,4 @@ def handle_enter(n_submit, current_value, prev_value):
     return current_value or ''
 
 if __name__ == '__main__':
-    app.run_server(debug=True, dev_tools_hot_reload=True)
+    app.run_server(host='0.0.0.0', port=10000)
