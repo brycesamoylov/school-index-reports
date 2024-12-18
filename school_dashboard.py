@@ -53,81 +53,8 @@ app.layout = html.Div([
                 'marginRight': '20px'
             }
         ),
-        # Replace Modal with html.Div for popup
-        html.Div(
-            id='help-modal',
-            children=[
-                html.Div([
-                    html.Div([
-                        html.H4('How to Use This Dashboard', style={'marginTop': '0'}),
-                        html.P([
-                            '1. Upload your Excel file using the drag & drop area or file selector\n',
-                            '2. Select one or more school years to compare\n',
-                            '3. Select one or more schools to analyze\n',
-                            '4. Use the height slider to adjust the graph size'
-                        ], style={'whiteSpace': 'pre-line'}),
-                        
-                        html.H4('Frequently Asked Questions'),
-                        html.P([
-                            html.Strong('Q: Why are some metrics missing from the graph?'),
-                            html.Br(),
-                            'A: If a metric has no data for a selected school/year, it will not appear in the graph.',
-                            html.Br(),
-                            html.Br(),
-                            html.Strong('Q: How do I compare schools over time?'),
-                            html.Br(),
-                            'A: Select multiple years and schools to see their performance trends.',
-                            html.Br(),
-                            html.Br(),
-                            html.Strong('Q: How do I reset the selections?'),
-                            html.Br(),
-                            'A: Click the "✕" in the dropdown menus to clear your selections.',
-                            html.Br(),
-                            html.Br(),
-                            html.Strong('Q: Can I download the graph?'),
-                            html.Br(),
-                            'A: Yes! Hover over the graph and use the download button in the toolbar.'
-                        ], style={'whiteSpace': 'pre-line'}),
-                        html.Button(
-                            '✕ Close',
-                            id='close-help',
-                            style={
-                                'position': 'absolute',
-                                'right': '10px',
-                                'top': '10px',
-                                'border': 'none',
-                                'background': 'transparent',
-                                'color': 'var(--text-color)',
-                                'cursor': 'pointer',
-                                'fontSize': '16px'
-                            }
-                        )
-                    ], style={
-                        'padding': '20px',
-                        'lineHeight': '1.5',
-                        'position': 'relative'
-                    })
-                ], style={
-                    'backgroundColor': 'var(--secondary-bg-color)',
-                    'color': 'var(--text-color)',
-                    'border': '1px solid var(--border-color)',
-                    'borderRadius': '8px',
-                    'maxWidth': '600px',
-                    'margin': '40px auto',
-                    'boxShadow': '0 4px 6px rgba(0, 0, 0, 0.1)'
-                })
-            ],
-            style={
-                'display': 'none',
-                'position': 'fixed',
-                'top': '0',
-                'left': '0',
-                'width': '100%',
-                'height': '100%',
-                'backgroundColor': 'rgba(0,0,0,0.5)',
-                'zIndex': '1000'
-            }
-        ),
+        # Help modal div here
+        html.Div(id='help-modal'),
     ], style={'float': 'left', 'padding': '10px'}),
     
     # Theme Toggle
@@ -144,11 +71,9 @@ app.layout = html.Div([
         )
     ], style={'overflow': 'hidden'}),
     
-    # Header
+    # Header with Logo
     html.Div([
-        # Logo and Title container
         html.Div([
-            # Logo
             html.Img(
                 src=f'data:image/png;base64,{encoded_logo}',
                 style={
@@ -157,7 +82,6 @@ app.layout = html.Div([
                     'verticalAlign': 'middle'
                 }
             ),
-            # Title
             html.H1('School Index Reports', 
                     style={
                         'display': 'inline-block',
@@ -165,117 +89,176 @@ app.layout = html.Div([
                         'margin': '20px',
                         'fontFamily': 'Segoe UI, Arial, sans-serif'
                     })
-        ], style={
-            'textAlign': 'center',
-            'margin': '20px'
-        })
+        ], style={'textAlign': 'center', 'margin': '20px'})
     ], style={'borderBottom': '2px solid var(--border-color)'}),
     
-    # File Upload Component
+    # File Upload
     html.Div([
         dcc.Upload(
             id='upload-data',
             children=html.Div([
-                html.I(className='fas fa-file-upload', style={'marginRight': '10px'}),
                 'Drag and Drop or ',
-                html.A('Select Excel File', style={'color': 'var(--accent-color)'})
+                html.A('Select Excel File')
             ]),
             style={
                 'width': '100%',
-                'height': '80px',
-                'lineHeight': '80px',
-                'borderWidth': '2px',
+                'height': '60px',
+                'lineHeight': '60px',
+                'borderWidth': '1px',
                 'borderStyle': 'dashed',
-                'borderRadius': '10px',
+                'borderRadius': '5px',
                 'textAlign': 'center',
-                'margin': '20px 0',
-                'transition': 'all 0.3s ease',
-                'cursor': 'pointer',
+                'margin': '10px'
             },
             multiple=False
         ),
-        # Add filename display
-        html.Div(id='file-name-display', style={
-            'textAlign': 'center',
-            'padding': '10px',
-            'color': 'var(--accent-color)',
-            'fontStyle': 'italic'
-        }),
-    ], style={'padding': '0 40px'}),
+        html.Div(id='file-name-display')
+    ], style={'margin': '20px'}),
     
     # Filters Container
     html.Div([
+        # Year Filter
         html.Div([
-            html.Label('Select School Year(s):', style={'fontWeight': 'bold', 'marginBottom': '8px'}),
+            html.Label('Select School Year(s):', style={'fontWeight': 'bold', 'marginBottom': '10px'}),
             dcc.Dropdown(
                 id='year-filter',
-                options=[],
                 multi=True,
-                style={'borderRadius': '8px'}
+                placeholder='Select year(s)...',
+                className='dash-dropdown'
             )
-        ], style={'width': '30%', 'display': 'inline-block', 'marginRight': '2%'}),
+        ], style={'flex': 1, 'marginRight': '20px'}),
         
+        # School Filter
         html.Div([
-            html.Label('Select School:', style={'fontWeight': 'bold', 'marginBottom': '8px'}),
+            html.Label('Select School(s):', style={'fontWeight': 'bold', 'marginBottom': '10px'}),
             dcc.Dropdown(
                 id='school-filter',
-                options=[],
                 multi=True,
-                style={'borderRadius': '8px'}
+                placeholder='Select school(s)...',
+                className='dash-dropdown'
             )
-        ], style={'width': '33%', 'display': 'inline-block', 'marginRight': '2%'}),
+        ], style={'flex': 1, 'marginRight': '20px'}),
         
-        # Add new metrics filter
+        # Metrics Filter
         html.Div([
-            html.Label('Select Metrics:', style={'fontWeight': 'bold', 'marginBottom': '8px'}),
+            html.Label('Select Metrics:', style={'fontWeight': 'bold', 'marginBottom': '10px'}),
             dcc.Dropdown(
                 id='metrics-filter',
-                options=[
-                    {'label': 'Composite Index', 'value': 'CompositeIndex'},
-                    {'label': 'Growth Index', 'value': 'GrowthIndex'},
-                    {'label': 'Proficiency Index', 'value': 'ProficiencyIndex'},
-                    {'label': 'School Quality Index', 'value': 'SchoolQuality Index'},
-                    {'label': 'EL Progress', 'value': 'EL ProgressIndex'},
-                    {'label': 'Graduation Index', 'value': 'GraduationIndex'}
-                ],
-                value=['CompositeIndex', 'GrowthIndex', 'ProficiencyIndex', 'SchoolQuality Index', 'EL ProgressIndex', 'GraduationIndex'],
                 multi=True,
-                style={'borderRadius': '8px'}
+                placeholder='Select metrics...',
+                className='dash-dropdown'
             )
-        ], style={'width': '33%', 'display': 'inline-block'})
-    ], style={'padding': '20px 40px', 'display': 'none', 'backgroundColor': 'var(--secondary-bg-color)', 'borderRadius': '10px', 'margin': '20px 40px'}, id='filter-container'),
+        ], style={'flex': 1})
+    ], id='filter-container', style={'display': 'none', 'padding': '20px', 'display': 'flex', 'gap': '20px'}),
+    
+    # Graph Type Toggle Button
+    html.Button(
+        id='toggle-graph-type',
+        children='Toggle to Line Graph',
+        style={
+            'backgroundColor': '#007bff',
+            'color': 'white',
+            'padding': '10px 20px',
+            'border': 'none',
+            'borderRadius': '5px',
+            'cursor': 'pointer',
+            'margin': '20px auto',
+            'display': 'block'
+        }
+    ),
     
     # Height Slider
     html.Div([
-        html.Label('Adjust Graph Height:', style={'fontWeight': 'bold', 'marginBottom': '8px'}),
+        html.Label('Adjust Graph Height:', style={'fontWeight': 'bold'}),
         dcc.Slider(
             id='height-slider',
             min=400,
             max=1200,
             step=50,
-            value=600,
-            marks={i: str(i) for i in range(400, 1201, 200)},
-            tooltip={'placement': 'bottom', 'always_visible': True},
-            className='custom-slider'
+            value=800,
+            marks={i: str(i) for i in range(400, 1201, 200)}
         )
-    ], style={'padding': '20px 40px', 'backgroundColor': 'var(--secondary-bg-color)', 'borderRadius': '10px', 'margin': '20px 40px'}),
+    ], style={'margin': '20px'}),
+    
+    # Custom Graph Title
+    html.Div([
+        html.Label('Custom Graph Title (optional):', style={'fontWeight': 'bold'}),
+        dcc.Input(
+            id='custom-title',
+            type='text',
+            placeholder='Enter custom title or leave blank for default',
+            n_submit=0,
+            style={
+                'width': '100%',
+                'padding': '8px',
+                'marginTop': '5px',
+                'borderRadius': '4px',
+                'border': '1px solid var(--border-color)',
+                'backgroundColor': 'var(--bg-color)',
+                'color': 'var(--text-color)'
+            }
+        ),
+        dcc.Checklist(
+            id='show-subtitle',
+            options=[{'label': 'Show "MDE School Index 2 Year Comparison" subtitle', 'value': 'show'}],
+            value=['show'],  # Default to showing the subtitle
+            style={'marginTop': '10px'}
+        )
+    ], style={'margin': '20px'}),
     
     # Graph Container
     html.Div([
         dcc.Graph(id='performance-indicators'),
-        # Simple text display for missing metrics
-        html.Div(
-            id='missing-metrics-message',
-            style={
-                'textAlign': 'center',
-                'padding': '10px',
-                'color': 'var(--text-color)',
-                'fontSize': '14px'
-            }
-        )
-    ], style={'padding': '20px 40px'}),
+        html.Div(id='missing-metrics-message')
+    ], style={'margin': '20px'}),
 
-], id='main-container', style={'backgroundColor': 'var(--bg-color)', 'color': 'var(--text-color)', 'minHeight': '100vh'})
+    # Help Modal Content
+    html.Div([
+        html.Div([
+            html.Div([
+                html.H3('Help Guide', style={'marginBottom': '20px'}),
+                html.Button(
+                    '✕',
+                    id='close-help',
+                    style={
+                        'position': 'absolute',
+                        'right': '10px',
+                        'top': '10px',
+                        'backgroundColor': 'transparent',
+                        'border': 'none',
+                        'fontSize': '20px',
+                        'cursor': 'pointer'
+                    }
+                ),
+                html.Div([
+                    html.H4('Getting Started:'),
+                    html.Ol([
+                        html.Li('Upload your Excel file using the drag-and-drop area or file selector.'),
+                        html.Li('Select the school year(s) and school(s) you want to analyze.'),
+                        html.Li('Choose the metrics you want to display on the graph.'),
+                        html.Li('Use the graph type toggle to switch between bar and line graphs.'),
+                        html.Li('Adjust the graph height using the slider if needed.')
+                    ])
+                ])
+            ], style={
+                'backgroundColor': 'var(--bg-color)',
+                'padding': '30px',
+                'borderRadius': '10px',
+                'maxWidth': '600px',
+                'margin': '50px auto',
+                'position': 'relative',
+                'boxShadow': '0 4px 6px rgba(0, 0, 0, 0.1)'
+            })
+        ], style={
+            'position': 'fixed',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)',
+            'zIndex': '1001'
+        })
+    ], id='help-modal', style={'display': 'none'}),
+
+], id='main-container')
 
 # Add callback for theme toggle
 @app.callback(
@@ -305,26 +288,46 @@ def update_theme(theme):
         '--accent-color': light_theme['accent']
     }
 
+def safe_float_convert(val):
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return 0.0
+
 # Update the graph callback to include theme-aware colors
 @app.callback(
     [Output('performance-indicators', 'figure'),
-     Output('missing-metrics-message', 'children')],
+     Output('missing-metrics-message', 'children'),
+     Output('toggle-graph-type', 'children')],
     [Input('year-filter', 'value'),
      Input('school-filter', 'value'),
      Input('metrics-filter', 'value'),
      Input('upload-data', 'contents'),
      Input('height-slider', 'value'),
-     Input('theme-toggle', 'value')],
-    State('upload-data', 'filename')
+     Input('theme-toggle', 'value'),
+     Input('toggle-graph-type', 'n_clicks'),
+     Input('custom-title', 'value'),
+     Input('show-subtitle', 'value')],
+    [State('toggle-graph-type', 'children'),
+     State('upload-data', 'filename')]
 )
-def update_graph(selected_years, selected_schools, selected_metrics, contents, height, theme, filename):
+def update_graph(selected_years, selected_schools, selected_metrics, contents, height, theme, n_clicks, custom_title, show_subtitle, current_text, filename):
+    # Initialize n_clicks if None
+    n_clicks = 0 if n_clicks is None else n_clicks
+    
+    # Determine graph type based on number of clicks
+    graph_type = 'line' if n_clicks % 2 == 1 else 'bar'
+    
+    # Toggle button text
+    new_button_text = 'Toggle to Bar Graph' if graph_type == 'line' else 'Toggle to Line Graph'
+    
     if contents is None:
-        return go.Figure(), ''
+        return go.Figure(), '', new_button_text
     
     df = parse_contents(contents, filename)
     
     if not isinstance(df, pd.DataFrame):
-        return go.Figure(), ''
+        return go.Figure(), '', new_button_text
     
     # Fill NaN values with 0
     df = df.fillna(0)
@@ -336,10 +339,25 @@ def update_graph(selected_years, selected_schools, selected_metrics, contents, h
             (df['Building Name'].isin(selected_schools))
         ]
     else:
-        return go.Figure(), ''
+        return go.Figure(), '', new_button_text
     
     # Create the figure
     fig = go.Figure()
+    
+    # Add the logo image
+    fig.add_layout_image(
+        dict(
+            source=f'data:image/png;base64,{encoded_logo}',
+            xref="paper",
+            yref="paper",
+            x=1,  # Right side
+            y=1.1,  # Above the plot
+            sizex=0.15,  # Width of the image
+            sizey=0.15,  # Height of the image
+            xanchor="right",
+            yanchor="top"
+        )
+    )
     
     # Use selected metrics instead of hardcoded list
     metrics = selected_metrics if selected_metrics else []
@@ -352,65 +370,161 @@ def update_graph(selected_years, selected_schools, selected_metrics, contents, h
             school_data = filtered_df[filtered_df['Building Name'] == school]
             for metric in metrics:
                 if metric in filtered_df.columns:
-                    if all(school_data[metric] == 0):  # Check if all values are 0
+                    if all(school_data[metric] == 0):
                         if metric not in missing_metrics:
                             missing_metrics.append(metric)
                     else:
+                        if graph_type == 'bar':
+                            fig.add_trace(go.Bar(
+                                name=f'{school} - {metric}',
+                                x=school_data['School Year'],
+                                y=school_data[metric],
+                                text=[f"{safe_float_convert(val):.1f}<br><b>{metric}</b>" for val in school_data[metric]],
+                                textposition='outside',
+                                textfont=dict(
+                                    size=12,
+                                    family='Segoe UI, Arial, sans-serif'
+                                ),
+                                cliponaxis=False,
+                                marker={
+                                    'cornerradius': 5
+                                }
+                            ))
+                        else:  # line graph
+                            fig.add_trace(go.Scatter(
+                                name=f'{school} - {metric}',
+                                x=school_data['School Year'],
+                                y=school_data[metric],
+                                text=[f"{metric}: {safe_float_convert(val):.2f}" for val in school_data[metric]],
+                                textposition='top center',
+                                mode='lines+markers+text',
+                                marker={'size': 8}
+                            ))
+    else:  # Single year selected
+        for metric in metrics:
+            if metric in filtered_df.columns:
+                if all(filtered_df[metric] == 0):
+                    if metric not in missing_metrics:
+                        missing_metrics.append(metric)
+                else:
+                    if graph_type == 'bar':
                         fig.add_trace(go.Bar(
-                            name=f'{school} - {metric}',
-                            x=school_data['School Year'],
-                            y=school_data[metric],
-                            text=school_data[metric].round(2),
-                            textposition='auto',
+                            name=metric,
+                            x=filtered_df['Building Name'],
+                            y=filtered_df[metric],
+                            text=[f"{safe_float_convert(val):.1f}<br><b>{metric}</b>" for val in filtered_df[metric]],
+                            textposition='outside',
+                            textfont=dict(
+                                size=12,
+                                family='Segoe UI, Arial, sans-serif'
+                            ),
+                            cliponaxis=False,
                             marker={
                                 'cornerradius': 5
                             }
                         ))
-    else:  # Single year selected
-        for metric in metrics:
-            if metric in filtered_df.columns:
-                if all(filtered_df[metric] == 0):  # Check if all values are 0
-                    if metric not in missing_metrics:
-                        missing_metrics.append(metric)
-                else:
-                    fig.add_trace(go.Bar(
-                        name=metric,
-                        x=filtered_df['Building Name'],
-                        y=filtered_df[metric],
-                        text=filtered_df[metric].round(2),
-                        textposition='auto',
-                        marker={
-                            'cornerradius': 5
-                        }
-                    ))
+                    else:  # line graph
+                        fig.add_trace(go.Scatter(
+                            name=metric,
+                            x=filtered_df['Building Name'],
+                            y=filtered_df[metric],
+                            text=[f"{metric}: {safe_float_convert(val):.2f}" for val in filtered_df[metric]],
+                            textposition='top center',
+                            mode='lines+markers+text',
+                            marker={'size': 8}
+                        ))
     
     # Simplify missing metrics message
     message = ''
     if missing_metrics:
         message = f"Categories with no data: {', '.join(missing_metrics)}"
     
-    # Update the layout with theme-aware colors
+    # Modify the title creation logic
+    if custom_title:
+        title = custom_title
+    else:
+        if len(selected_schools) == 1:
+            # Extract school name (everything before the "/")
+            school_name = selected_schools[0].split('/')[0].strip()
+            title = school_name
+            if show_subtitle and 'show' in show_subtitle:
+                title += "<br>MDE School Index 2 Year Comparison"
+        else:
+            title = "School Performance Comparison"
+            if show_subtitle and 'show' in show_subtitle:
+                title += "<br>MDE School Index 2 Year Comparison"
+
+    # Update the layout with theme-aware colors and improved styling
     layout_updates = {
         'plot_bgcolor': dark_theme['background'] if theme == 'dark' else light_theme['background'],
         'paper_bgcolor': dark_theme['background'] if theme == 'dark' else light_theme['background'],
-        'font': {'color': dark_theme['text'] if theme == 'dark' else light_theme['text']},
-        'title': {'font': {'size': 24, 'family': 'Segoe UI, Arial, sans-serif'}},
+        'font': {
+            'color': dark_theme['text'] if theme == 'dark' else light_theme['text'],
+            'family': 'Segoe UI, Arial, sans-serif'
+        },
+        'title': {
+            'text': title,
+            'font': {
+                'size': 24,
+                'family': 'Segoe UI, Arial, sans-serif',
+                'color': dark_theme['text'] if theme == 'dark' else light_theme['text']
+            },
+            'y': 0.95,  # Position the title higher to make room for the logo
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
         'height': height,
         'xaxis': {
             'tickangle': 20 if len(selected_schools) >= 3 else 0,
-            'gridcolor': dark_theme['border'] if theme == 'dark' else light_theme['border']
+            'gridcolor': dark_theme['border'] if theme == 'dark' else light_theme['border'],
+            'title': {
+                'text': 'School Year' if len(selected_years) > 1 else 'Schools',
+                'font': {'size': 14}
+            }
         },
         'yaxis': {
-            'gridcolor': dark_theme['border'] if theme == 'dark' else light_theme['border']
+            'gridcolor': dark_theme['border'] if theme == 'dark' else light_theme['border'],
+            'title': {
+                'text': 'Index Value',
+                'font': {'size': 14}
+            },
+            'range': [0, max([max(trace.y) for trace in fig.data]) * 1.2]
         },
         'showlegend': True,
-        'legend': {'orientation': 'h', 'yanchor': 'bottom', 'y': 1.02},
-        'margin': {'b': 150}
+        'legend': {
+            'orientation': 'h',
+            'yanchor': 'bottom',
+            'y': -0.3,  # Move legend below the graph
+            'xanchor': 'center',
+            'x': 0.5,
+            'bgcolor': 'rgba(0,0,0,0)'  # Transparent background
+        },
+        'margin': {
+            't': 120,  # Top margin for title and logo
+            'b': 150,  # Bottom margin for legend
+            'l': 80,
+            'r': 80,
+            'pad': 10
+        }
     }
     
     fig.update_layout(**layout_updates)
     
-    return fig, message
+    # Update bar/line styles for better visibility
+    if graph_type == 'bar':
+        fig.update_traces(
+            marker_line_color=dark_theme['border'] if theme == 'dark' else light_theme['border'],
+            marker_line_width=1,
+            opacity=0.8
+        )
+    else:  # line graph
+        fig.update_traces(
+            line_width=3,
+            marker_size=8
+        )
+    
+    return fig, message, new_button_text
 
 # Add custom CSS
 app.index_string = '''
@@ -483,6 +597,12 @@ def parse_contents(contents, filename):
         if 'xlsx' in filename:
             # Read Excel file
             df = pd.read_excel(io.BytesIO(decoded))
+            
+            # Convert '--' to 0 or NaN
+            for column in df.columns:
+                if df[column].dtype == object:  # Only process non-numeric columns
+                    df[column] = df[column].replace('--', 0)
+                    
             return df
     except Exception as e:
         print(e)
@@ -494,13 +614,15 @@ def parse_contents(contents, filename):
     [Output('filter-container', 'style'),
      Output('year-filter', 'options'),
      Output('year-filter', 'value'),
-     Output('school-filter', 'options')],
+     Output('school-filter', 'options'),
+     Output('metrics-filter', 'options'),
+     Output('metrics-filter', 'value')],
     Input('upload-data', 'contents'),
     State('upload-data', 'filename')
 )
 def update_filters(contents, filename):
     if contents is None:
-        return {'display': 'none'}, [], None, []
+        return {'display': 'none'}, [], None, [], [], None
     
     df = parse_contents(contents, filename)
     
@@ -510,9 +632,30 @@ def update_filters(contents, filename):
         school_options = [{'label': school, 'value': school} 
                          for school in sorted(df['Building Name'].unique())]
         
-        return {'padding': '20px', 'display': 'block'}, year_options, [], school_options
+        # Get all available metrics
+        exclude_columns = ['School Year', 'Building Name']
+        all_metrics = [col for col in df.columns if col not in exclude_columns]
+        metric_options = [{'label': metric, 'value': metric} for metric in sorted(all_metrics)]
+        
+        # Define the default metrics to be selected
+        default_metrics = [
+            "SchoolQuality Index",
+            "CompositeIndex",
+            "GraduationIndex",
+            "GrowthIndex",
+            "EL ProgressIndex",
+            "ProficiencyIndex"
+        ]
+        
+        # Filter to only include metrics that exist in the dataframe
+        selected_metrics = [metric for metric in default_metrics if metric in df.columns]
+        
+        return {
+            'padding': '20px',
+            'display': 'block'
+        }, year_options, [], school_options, metric_options, selected_metrics
     
-    return {'display': 'none'}, [], None, []
+    return {'display': 'none'}, [], None, [], [], None
 
 # Add a new callback to update the filename display
 @app.callback(
@@ -554,5 +697,25 @@ def toggle_modal(help_clicks, close_clicks, current_style):
     
     return current_style
 
+# Add this new callback to handle Enter key presses
+@app.callback(
+    Output('custom-title', 'value'),
+    [Input('custom-title', 'n_submit'),
+     Input('custom-title', 'value')],
+    [State('custom-title', 'value')]
+)
+def handle_enter(n_submit, current_value, prev_value):
+    ctx = callback_context
+    if not ctx.triggered:
+        return current_value or ''
+    
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if trigger_id == 'custom-title' and ctx.triggered[0]['prop_id'].endswith('n_submit'):
+        # Only add <br> when Enter is pressed
+        return current_value + '<br>'
+    
+    return current_value or ''
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, dev_tools_hot_reload=True)
