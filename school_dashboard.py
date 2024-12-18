@@ -71,6 +71,7 @@ app.layout = html.Div([
         )
     ], style={'overflow': 'hidden'}),
     
+    
     # Header with Logo
     html.Div([
         html.Div([
