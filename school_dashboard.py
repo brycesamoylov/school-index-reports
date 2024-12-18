@@ -9,6 +9,7 @@ from dash import Dash, dcc, html, Input, Output, State, callback_context
 from dash.dependencies import Input, Output, State
 import base64
 import io
+import os
 
 # Encode the logo image
 logo_path = "CSP_Logo.png"  # Changed from cs_partners_logo.png to CSP_Logo.png
@@ -719,4 +720,5 @@ def handle_enter(n_submit, current_value, prev_value):
     return current_value or ''
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=10000)
+    port = int(os.environ.get('PORT', 10000))
+    app.run_server(host='0.0.0.0', port=port)
