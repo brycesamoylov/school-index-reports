@@ -1,3 +1,4 @@
 from school_dashboard import server
 
-app = server 
+if __name__ == "__main__":
+    server.run() 
